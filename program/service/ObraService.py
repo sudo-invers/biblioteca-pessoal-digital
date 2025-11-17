@@ -7,7 +7,7 @@ import string
 @property
 class ObraService(ABC):
     """
-    Classe abstract para ser usada em LivroService e ObraService;
+    Concrete class that is used in RevistaService and ObraService;; 
     """
 
     def criar():

@@ -2,7 +2,7 @@ from abc import ABC
 from sqlite3 import Date
 import string
 
-from program.database.databaseConnection import query
+from program.repository.RepositoryConnection import query
 
 # isso, vai dar sql injection com 100% de certeza;
 class Repository(ABC):
@@ -13,11 +13,14 @@ class Repository(ABC):
     def __init__(self):
         self._query = query
 
-    def save(query, titulo, autor, ano, tipo, genero, quantidadePaginas, status, avaliacao, anotacao):
-        query = f"INSERT INTO Obra (titulo, autor, ano, tipo, genero, quantidadePaginas, status, avaliacao, anotacao) VALUES ({titulo}, {autor}, {ano}, {tipo}, {genero}, {quantidadePaginas}, {status}, {avaliacao}, {anotacao});"
+    def save(query, titulo, autor, ano, tipo, genero, quantidade_paginas, status, avaliacao, anotacao):
+        query = """
+                INSERT INTO Obra (titulo, autor, ano, tipo, genero, quantidade_paginas, status, avaliacao, anotacao)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """
         return query
     def getAll():
-        pass
+        return query
     def getById(id:int):
         pass
     def findByTitulo(titulo:string): 
