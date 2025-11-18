@@ -1,5 +1,4 @@
 from abc import ABC
-from genericpath import exists
 import sqlite3
 from zipapp import create_archive
 
@@ -25,7 +24,6 @@ else:
     print("Arquivo 'biblioteca.db' não encontrado.")
 
 """
-
 
 class RepositoryConnection(ABC):
 
