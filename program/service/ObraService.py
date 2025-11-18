@@ -7,10 +7,10 @@ import string
 @property
 class ObraService(ABC):
     """
-    Concrete class that is used in RevistaService and ObraService;; 
+    This class is used to connect what is in the repository in the controller (which actually the user use).    
     """
 
-    def criar():
+    def Save():
         repo.save()
 
     def getAll(): 
@@ -19,13 +19,13 @@ class ObraService(ABC):
     def getById(id:int):
         repo.getById()
     
-    def findByTitulo(titulo:string): 
+    def findByTitle(title:string): 
         repo.findByTitulo()
     
-    def findByAutor(autor:string): 
+    def findByAuthor(author:string): 
         repo.findByAutor()
     
-    def findByGenero(genero:string): 
+    def findByGenre(genre:string): 
         repo.findByGenero
     
     def findByStatus(status:int): 

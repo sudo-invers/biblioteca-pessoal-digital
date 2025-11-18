@@ -13,25 +13,32 @@ class Repository(ABC):
     def __init__(self):
         self._query = query
 
-    def save(query, titulo, autor, ano, tipo, genero, quantidade_paginas, status, avaliacao, anotacao):
+    def save(query, name_class, title, author, year, type, genre, pages_quantity, status, avaliation, anotation):
+
+        """
+        Docstring for save
+        
+        :param name_class: Use os nomes que estão em program.model apenas;
+        """
+
         query = """
-                INSERT INTO Obra (titulo, autor, ano, tipo, genero, quantidade_paginas, status, avaliacao, anotacao)
+                INSERT INTO ? (title, author, year, type, genre, pages_quantity, status, avaliation, anotation)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-                """
+                """, name_class, title, author, year, type, genre, pages_quantity, status, avaliation, anotation
         return query
     def getAll():
         return query
     def getById(id:int):
-        pass
-    def findByTitulo(titulo:string): 
-        pass
-    def findByAutor(autor:string): 
-        pass
-    def findByGenero(genero:string): 
-        pass
+        return query
+    def findByTitle(title:string): 
+        return query
+    def findByAuthor(author:string): 
+        return query
+    def findByGenre(genre:string): 
+        return query
     def findByStatus(status:string): 
-        pass
-    def findByPeriodoLeitura(periodo:Date): 
-        pass
+        return query
+    #def findByReadingPeriod(period:Date): 
+        #return query
     def deleteById(id:int): 
-        pass
+        return query
