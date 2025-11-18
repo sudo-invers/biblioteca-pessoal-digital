@@ -29,18 +29,18 @@ class Repository(ABC):
                 """, name_class, title, author, year, type, genre, pages_quantity, status, avaliation, anotation
         return query
     def getAll():
-        return query
+        pass
     def getById(id:int):
-        return query
+        pass
     def findByTitle(title:string): 
-        return query
+        pass
     def findByAuthor(author:string): 
-        return query
+        pass
     def findByGenre(genre:string): 
-        return query
+        pass
     def findByStatus(status:string): 
-        return query
+        pass
     #def findByReadingPeriod(period:Date): 
-        #return query
+        pass
     def deleteById(id:int): 
-        return query
+        pass
