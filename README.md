@@ -11,3 +11,27 @@ A persistência pode ser feita em JSON ou SQLite, com um repositório desacoplad
 
 # Estrutura das Classes:
 
+<img width="2166" height="2608" alt="Untitled diagram-2025-11-18-152217" src="https://github.com/user-attachments/assets/828af2cf-074c-4693-814c-54b36f58c71e" />
+
+# Estrutura planejada de classes
+```bash
+.
+├── main.py
+├── program
+│   ├── controller
+│   │   ├── BookController.py
+│   │   ├── MagazineController.py
+│   │   └── ObraController.py
+│   ├── model
+│   │   ├── Book.py
+│   │   ├── Magazine.py
+│   │   └── Obra.py
+│   ├── repository
+│   │   ├── RepositoryConnection.py
+│   │   └── Repository.py
+│   └── service
+│       ├── BookService.py
+│       ├── MagazineService.py
+│       └── ObraService.py
+└── README.md
+```
