@@ -1,0 +1,15 @@
+{
+    windown{
+        {
+        terminal text sizes and formats
+
+
+        |   -   -   -   -   -   -   -   |
+        |          menu                 |
+        |          options              |   
+        |          start                |
+        -   -   -   -   -   -   -   -   |    
+
+        }
+    }
+}

@@ -1,16 +1,13 @@
-from abc import ABC
 import sqlite3
+import string
 from zipapp import create_archive
 
-class RepositoryConnection(ABC):
+class RepositoryConnection():
 
-    def __init__(self, query):
-        self._query = query
-
-    def novaQuery(query):
+    def novaQuery(query:string, data: string):
         # Verify if the bookshelf.db exists, if don't, create it;
         try:
-            dbLocation = "/databases/bookshelf.db"
+            dbLocation = "/databases/library.db"
             
             if (not dbLocation.exists):
                 # Creating the file;
@@ -19,16 +16,27 @@ class RepositoryConnection(ABC):
                 if (not dbLocation.exists):
                     return FileNotFoundError(f"File '{dbLocation}' not found")
             
-            # Conecting to sqlite;
-            connection = sqlite3.connect("bookshelf.db")
-            cursor = connection.cursor()
-            print("DB Init")
+            if (data is not None):
+                # Conecting to sqlite;
+                connection = sqlite3.connect("library.db")
+                cursor = connection.cursor()
+                print("DB INIT SUCCESS")
 
-            # Execute the query
-            cursor.execute(query)
+                # Execute the query and the data params
+                cursor.executemany(query,data)
 
-            cursor.close()
+                cursor.close()
+            else:
+            
+                # Conecting to sqlite;
+                connection = sqlite3.connect("library.db")
+                cursor = connection.cursor()
+                print("DB INIT SUCCESS")
 
+                # Execute the execute
+                cursor.execute(query)
+
+                cursor.close()
 
         except sqlite3.Error as error:
             # If some error occur, rollback to the last 'good' commit;
@@ -39,4 +47,4 @@ class RepositoryConnection(ABC):
             if connection:
                 connection.commit()
                 connection.close()
-                print("sucesso")
+                print("SUCESS")

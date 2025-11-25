@@ -42,7 +42,6 @@ classDiagram
         -String author
         -int year
         -Date inclusionDate
-        -Date inclusionDate
         -int pagesNumber
         -int avaliation
         -String genre
@@ -55,7 +54,6 @@ classDiagram
         <<enumeration>>
         BOOK
         MAGAZINE
-
     }
     class ReadingStatus{
         -AlterStatus status
@@ -72,7 +70,6 @@ classDiagram
         UNREAD
         READING
         READ
-
     }
     class Book{
     }

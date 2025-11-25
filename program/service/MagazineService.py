@@ -11,5 +11,5 @@ class ObraService(ObraService, Obra):
         self._edition= edition
 
     def getByEdition():
-        return repo.getByEdition
+        return repo.getByEdition()
 
