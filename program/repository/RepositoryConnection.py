@@ -1,10 +1,9 @@
 import sqlite3
-import string
 from zipapp import create_archive
 
 class RepositoryConnection():
 
-    def novaQuery(query:string, data: string):
+    def newQuery(query:str, data: str | None = None):
         # Verify if the bookshelf.db exists, if don't, create it;
         try:
             dbLocation = "/databases/library.db"
