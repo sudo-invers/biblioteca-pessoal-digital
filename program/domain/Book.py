@@ -1,5 +1,7 @@
-from program.model import Obra
+from program.domain import Publication, PublicationType
 
-class Book(Obra):
-    def __init__(self, id, title, author, year, type, genre, pages_quantity, status, avaliation, anotation, page_number):
-        super().__init__(id, title, author, year, type, genre, pages_quantity, status, avaliation, anotation, page_number)
+class Book(Publication):
+    def __init__(self, id, title, author, year, inclusionDate, pagesNumber, avaliation, genre, anotations, status):
+        super().__init__(id, title, author, year, 
+                        inclusionDate, pagesNumber, avaliation,
+                        genre, anotations, status, type=PublicationType.BOOK)
