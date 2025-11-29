@@ -1,4 +1,5 @@
-from program.domain import Publication, PublicationType
+from program.domain.Publication import Publication
+from program.domain.PublicationType import PublicationType
 
 class Book(Publication):
     def __init__(self, id, title, author, year, inclusionDate, pagesNumber, avaliation, genre, anotations, status):

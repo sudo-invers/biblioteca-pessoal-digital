@@ -1,10 +1,11 @@
-from program.model import Obra
+from program.domain.Publication import Publication
+from program.domain.PublicationType import PublicationType
 
-class Magazine(Obra):
-    def __init__(self, id, title, author, year, type, genre, pages_quantity, status, avaliation, anotation, page_number, edition):
-        super().__init__(id, title, author, year, type, genre, pages_quantity, status, avaliation, anotation, page_number)
+class Magazine(Publication):
+    def __init__(self, id, title, author, year, inclusionDate, pagesNumber, avaliation, genre, anotations, status, edition):
+        super().__init__(id, title, author,
+                        year, inclusionDate, pagesNumber,
+                        avaliation, genre, anotations,
+                        status, edition, type=PublicationType.MAGAZINE)
 
         self._edition = edition
-
-    
-    

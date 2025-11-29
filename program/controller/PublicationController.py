@@ -1,28 +1,20 @@
-from fastapi import FastAPI
-
 from program.domain.Book import Book
 from program.domain.Magazine import Magazine
 from program.service.PublicationService import PublicationService as service
 
-app = FastAPI()
-
 class PublicationController():
     
-    @app.get("/")
-    def root():
+    async def root():
         pass
-    @app.get("/publication")
-    def getAll():
-        return service.getAll()
 
-    @app.post("/publication/book/")
-    def createbook():
-        return service.Save(Book)
+    async def getAll():
+        return {service.getAll()}
 
-    @app.post("/publication/magazine/")
-    def createMagazine():
-        service.Save(Magazine)
+    async def createbook(book: Book) -> Book:
+        return {"id": service.Save(book)}
 
-    @app.delete("/publication/{id}")
-    def deleteUserById(id: int):
-        pass 
+    async def createMagazine(magazine: Magazine) -> Magazine:
+        return {"id": service.Save(magazine)}
+
+    async def deleteUserById(id: int) -> int:
+        return {"id": service.deleteById(id)}

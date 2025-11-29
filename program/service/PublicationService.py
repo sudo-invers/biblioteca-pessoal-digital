@@ -1,6 +1,5 @@
-from sqlite3 import Date
-import sqlite3
-from repository.Repository import Repository as repo
+from datetime import date
+from program.repository.Repository import Repository as repo
 
 class PublicationService():
     """
@@ -14,13 +13,9 @@ class PublicationService():
         return repo.findAll()
     
     def getById(id:int):
-
         repo.findById(id)
 
-        if (id is None):
-            return sqlite3.Error()
-        else:
-            return repo.findById()
+        return repo.findById()
     
     def findByTitle(title:str):
         return repo.findByTitulo()
@@ -34,7 +29,7 @@ class PublicationService():
     def findByStatus(status:int): 
         return repo.findByStatus
     
-    def findByPeriodoLeitura(periodo:Date):
+    def findByPeriodoLeitura(periodo:date):
         return repo.findByPeriodoLeitura()
     
     def deleteById(id:int):
