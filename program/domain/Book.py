@@ -1,5 +1,14 @@
-from program.model import Obra
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
+from program.domain.Publication import Publication
+from program.domain.PublicationType import PublicationType
 
-class Book(Obra):
-    def __init__(self, id, title, author, year, type, genre, pages_quantity, status, avaliation, anotation, page_number):
-        super().__init__(id, title, author, year, type, genre, pages_quantity, status, avaliation, anotation, page_number)
+class Book(Publication):
+
+    __tablename__ = "book"
+
+    id: Mapped[int] = mapped_column(ForeignKey("publications.id"), primary_key=True)
+
+    __mapper_args__ = {
+        "polymorphic_identity": PublicationType.BOOK
+    }

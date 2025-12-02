@@ -1,5 +1,6 @@
 {
-    windown{
+    windown
+    {
         {
         terminal text sizes and formats
 

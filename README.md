@@ -206,20 +206,30 @@ classDiagram
 .
 ├── main.py
 ├── program
+│   ├── cli
+│   │   ├── CLI.py
+│   │   ├── ComandParser.py
+│   │   ├── Comands.py
+│   │   ├── Menu.py
+│   │   └── window.txt
 │   ├── controller
-│   │   ├── BookController.py
-│   │   ├── MagazineController.py
-│   │   └── ObraController.py
-│   ├── model
+│   │   └── PublicationController.py
+│   ├── domain
+│   │   ├── AlterStatus.py
+│   │   ├── Anotation.py
 │   │   ├── Book.py
+│   │   ├── Colletion.py
 │   │   ├── Magazine.py
-│   │   └── Obra.py
+│   │   ├── Publication.py
+│   │   ├── PublicationType.py
+│   │   ├── ReadingStatus.py
+│   │   └── Report.py
 │   ├── repository
 │   │   ├── RepositoryConnection.py
 │   │   └── Repository.py
-│   └── service
-│       ├── BookService.py
-│       ├── MagazineService.py
-│       └── ObraService.py
-└── README.md
+│   ├── service
+│   │   └── PublicationService.py
+│   └── settings.json
+├── README.md
+└── venv
 ```
