@@ -1,5 +1,5 @@
-from enum import StrEnum
+from enum import Enum
 
-class PublicationType(StrEnum):
+class PublicationType(Enum):
     BOOK = "book"
     MAGAZINE = "magazine"

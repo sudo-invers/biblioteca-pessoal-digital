@@ -1,3 +1,6 @@
-from program.controller.PublicationController import PublicationController
+from fastapi import FastAPI
+from program.controller.PublicationController import router as publication_router
 
-PublicationController()
+app = FastAPI()
+
+app.include_router(publication_router)

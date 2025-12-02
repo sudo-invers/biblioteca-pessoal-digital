@@ -3,7 +3,7 @@ from program.repository.Repository import Repository as repo
 
 class PublicationService():
     """
-    This class is used to connect what is in the return repository in the controller (which actually the user use).    
+    This class is used to connect what is in the repository to controller    
     """
 
     def Save():

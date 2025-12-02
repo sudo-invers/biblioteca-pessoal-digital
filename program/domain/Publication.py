@@ -1,45 +1,33 @@
-from abc import ABC
-from sqlite3 import Date
-import string
+from sqlalchemy import BigInteger, Column, Date, Enum, Integer, String, func
+from sqlalchemy.orm import relationship
 
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
-
-from program.domain import Anotation, PublicationType, ReadingStatus
-
-Base = declarative_base()
-
+from program.domain.Base import Base
+from program.domain.PublicationType import PublicationType
 class Publication(Base):
     """
-    classe que ira vai ser implementada em Livro.py e Revista.py
+    class that implements Book.py and Magazine.py
     """
-    
+
     __tablename__ = "publications"
     __abstract__ = False
 
-    id = Column(Integer, primarykey=True, index=True)
-    title = Column(String, nullable=False)
-    author = Column(String, nullable=False)
-    year = Column(String, nullable=False)
-    inclusiondate = Column(String, nullable=False)
-    pagesnumber = Column(String, nullable=False)
-    avaliation = Column(String, nullable=False)
-    genre = Column(String, nullable=False)
-    anotations = Column(String, nullable=False)
-    type = Column(String, nullable=False)
+    id = Column(BigInteger, primary_key=True, index=True)
+    annotations = relationship("Annotation", back_populates="publication", cascade="all, delete-orphan")
 
-    def init(self, id: int, title: string, author: string, year: int, inclusionDate: Date, pagesNumber: int, avaliation: int, genre: string, anotations: Anotation.Anotation, status: ReadingStatus, type: PublicationType):
-        self.id = id
-        self.title = title
-        self.author = author
-        self.year = year
-        self.inclusionDate = inclusionDate
-        self.pagesNumber = pagesNumber
-        self.avaliation = avaliation
-        self.genre = genre
-        self.anotations = anotations
-        self.status = status
-        self.type = type
-    
+    #sqlAlchemy make the init itself
+    title = Column(String, nullable=False)
+    author = Column(String, nullable=True)
+    year = Column(Integer, nullable=True)
+    inclusion_date = Column(Date, default=func.current_date, nullable=False) # Defined automaticaly
+    pages_number = Column(Integer, nullable=False) # I think i can automatically calculate the page quantity
+    avaliation = Column(Integer, nullable=True)
+    genre = Column(String, nullable=True) #Maybe a enum later?
+    type_ = Column("type",Enum(PublicationType), nullable=False) # Named type_, to not be confused with type(class)
+
+    __mapper_args__ = {
+        "polymorphic_identity": "publication",
+        "polymorphic_on": type_
+}
+
     def synopsis(self):
-         return f"Title: {self.title}, author: {self.author}, {self.pagesNumber} pages"
+         return f"Title: {self.title}, author: {self.author}, {self.pages_number} pages"

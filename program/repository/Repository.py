@@ -26,81 +26,82 @@ class Repository():
                 VALUES (:title, :author, :year, :type, :inclusionDate, :genre, :pagesNumber, :status, :avaliation, :anotation);
                 """
         
-        return RepositoryConnection.novaQuery(query, data)
+        return RepositoryConnection().newQuery(query, data)
     
-    def findAll(tableName:str):
+    def findAll():
         """
         debug only
         
         :return: all in the bookshelf
         """
 
-        data = ({"table_name": tableName})
+        query = "select * from bookshelf;"
 
-        query = "select * from :table_name;"
-
-        return RepositoryConnection.novaQuery(query,data)
+        return RepositoryConnection().newQuery(query)
     
     def findById(id:int):
         data = ({"id": id})
 
         query = "select * from bookshelf where id = :id;"
 
-        return RepositoryConnection.novaQuery(query, data)
+        return RepositoryConnection().newQuery(query, data)
 
     def findByTitle(title:str): 
         data = ({"title": title})
 
         query = "select * from bookshelf where title like :title;"
-        return RepositoryConnection.novaQuery(query,data)
+        return RepositoryConnection().newQuery(query,data)
 
     def findByAuthor(author:str):
         data = ({"author": author})
 
         query = "select * from bookshelf where author where=:author;"
-        return RepositoryConnection.novaQuery(query, data)
+        return RepositoryConnection().newQuery(query, data)
 
     def findByGenre(genre:str):
         data = ({"genre": genre})
 
         query = "select * from bookshelf where genre WHERE genre=:genre;"
-        return RepositoryConnection.novaQuery(query, data)
+        return RepositoryConnection().newQuery(query, data)
 
     def findByStatus(status:str):
         data = ({"status": status})
+
         query = "select * from bookshelf where status where status = :status;"
         
-        return RepositoryConnection.novaQuery(query, data)
+        return RepositoryConnection().newQuery(query, data)
 
     #def findByReadingPeriod(period:Date): 
         #return 
 
     def deleteById(id:int):
         data = ({"id": id})
+
         query = "DELETE FROM bookshelf WHERE id=:id;"
 
         if (id is None):
             return None
         else:
-            return RepositoryConnection.novaQuery(query, data)
+            return RepositoryConnection().newQuery(query, data)
         
     def findByWord(word:str):
         data = ({"word": word})
-        query = "SELECT * FROM bookshelf WHERE word=:word"
 
-        return RepositoryConnection.novaQuery(query, data)
-    
+        query = "SELECT * FROM bookshelf WHERE word=:word;"
+
+        return RepositoryConnection().newQuery(query, data)
+
     def findBestFivePublications():
         query = "SELECT title, avaliation FROM publication ORDER BY avaliation DESC LIMIT 5;"
 
-        return RepositoryConnection.novaQuery(query)
+        return RepositoryConnection().newQuery(query)
     
     def findCompletedAverageScore():
-        query = "SELECT title, avaliation FROM publication"
+        query = "SELECT title, avaliation FROM publication;"
 
-        return RepositoryConnection.novaQuery(query)
+        return RepositoryConnection().newQuery(query)
     
     def findPublicationAmount():
-        query = "SELECT COUNT(id) FROM publication"
+        query = "SELECT COUNT(id) FROM publication;"
         
-        return Repository.novaQuery(query)
+        return Repository.newQuery(query)
