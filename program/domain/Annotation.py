@@ -1,7 +1,7 @@
-from datetime import datetime
-
-from sqlalchemy import Column, Date, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+"""
+from datetime import date
+from sqlalchemy import Date, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from program.domain.Base import Base
 
@@ -19,13 +19,25 @@ class Annotation(Base):
 
     # SqlAlchemy make a init based how the atributes bellow, test it later, and remove in the next 'entrega'
 
-    id = Column(Integer, primary_key=True)
-    publication_id = Column(Integer, ForeignKey("publications.id"))
-    publication = relationship("Publication", back_populates="annotations")
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # FK for Publication
+    publication_id: Mapped[int] = mapped_column(
+        ForeignKey("publications.id"),
+        nullable=False
+    )
+    # relacionamento inverso
+    publication: Mapped["Publication"] = relationship(  # noqa: F821 # The sqlalchemy injects in the mapping fase
+        back_populates="annotations"
+    )
 
-    text = Column(String, nullable=True) # I can just mark the page if i want
-    page = Column(Integer, nullable=False)
-    created_at = Column(Date, default=datetime.now, nullable=False)
+    text: Mapped[str] = mapped_column(String)
+    page: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[date] = mapped_column(
+        Date,
+        default=date.today,
+        nullable=False
+    )
 
     def __repr__(self):
-        return f"<Annotation id={self.id} page={self.page} text={self.text[:255]}>"
+        return f"<Annotation id={self.id} page={self.page} text={self.text}>"
+"""

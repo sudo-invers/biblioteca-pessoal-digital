@@ -1,20 +1,42 @@
+from abc import ABC
 from datetime import date
-from program.repository.Repository import Repository as repo
+from program.databases.Repository import Repository as repo
 
-class PublicationService():
+class BaseService(ABC):
     """
     This class is used to connect what is in the repository to controller    
     """
 
-    def Save():
-        return repo.save()
+    # This is verrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyy big
+    def save(
+        self,
+        title,
+        author,
+        year,
+        type,
+        genre,
+        inclusionDate,
+        pagesNumber,
+        status,
+        avaliation,
+    ):
+        return self.repo.save(
+            title,
+            author,
+            year,
+            type,
+            genre,
+            inclusionDate,
+            pagesNumber,
+            status,
+            avaliation,
+        )
 
     def getAll():
         return repo.findAll()
     
     def getById(id:int):
         repo.findById(id)
-
         return repo.findById()
     
     def findByTitle(title:str):

@@ -1,6 +1,6 @@
-from program.domain.Book import Book
-from program.domain.Magazine import Magazine
-from program.service.PublicationService import PublicationService as service
+from program.schemas.Magazine import Magazine
+from program.schemas.Book import Book
+from program.service.BaseService import PublicationService as service
 
 from fastapi import FastAPI
 
@@ -10,7 +10,7 @@ router = APIRouter()
 
 app = FastAPI()
 
-class PublicationController():
+class BaseController():
 
     async def root():
         pass
@@ -19,14 +19,14 @@ class PublicationController():
     async def getAll():
         return service.getAll()
 
-    @app.post("/publications/create/book/{book}")
+    @app.post("/publications/create/book")
     async def createbook(book: Book):
         return service.Save(book)
 
-    @app.post("/publications/create/magazine/{magazine}")
+    @app.post("/publications/create/magazine")
     async def createMagazine(magazine: Magazine):
         return service.Save(magazine)
 
-    @app.delete("/publications/delete/{id}")
+    @app.delete("/publications/delete")
     async def deletePublicationById(id: int):
         return service.deleteById(id)

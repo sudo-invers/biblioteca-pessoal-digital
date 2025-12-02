@@ -1,29 +1,29 @@
-from program.repository.Repository import repository as repo
+from program.repository.BaseRepository import Repository as repo
 
 
-class repository:
+class Report():
 
     def __init__(self, repo):
-        self.repository = repo()
+        self.repository = repo
 
     def unreadAmount():
-        return repo().findByStatus("reading")
+        return repo.findByStatus("reading")
     
     def readingAmount():
-        return repo().findByStatus("unread")
+        return repo.findByStatus("unread")
     
     def completedAmount():
-        return repo().findByStatus("completed")
+        return repo.findByStatus("completed")
 
     def publicationAmount() -> int:
-       return repo().findPublicationAmount()
+       return repo.findPublicationAmount()
     
     def completedAverageScore() -> float:
-        scores = repo().findCompletedAverageScore()
-        total = repo().findPublicationAmount()
+        scores = repo.findCompletedAverageScore()
+        total = repo.findPublicationAmount()
 
         return (scores/total)
 
     def bestFive():
-        return repo().findBestFivePublications()
+        return repo.findBestFivePublications()
         

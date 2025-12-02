@@ -1,5 +1,7 @@
-from sqlalchemy import create_engine, text
+from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.orm import sessionmaker
+
+from program.domain.Base import Base
 
 class RepositoryConnection:
     """
@@ -8,9 +10,13 @@ class RepositoryConnection:
     # Switched from pure sqlite3, to sqlAlchemy for security reasons
     # Maybe later i will try using the ORM in its full potencial, but for now, it will not make a diference
 
-    def __init__(self, database_url: str = "sqlite:///library.db"):
-        self.engine = create_engine(database_url, echo=True)
-        self.SessionLocal = sessionmaker(bind=self.engine, autocommit=False, autoflush=False)
+    def __init__(self):
+        self.engine = create_engine("sqlite:///library.db", echo=True)
+        self.SessionLocal = sessionmaker(bind=Engine, autocommit=False, autoflush=False)
+
+        print("Verifing database...")
+        self.Base.metadata.create_all(self.engine) # If it exist, don't recreate again
+        print("Database is ready!")
 
     def newQuery(self, query: str,  data: dict | list[dict] | None = None):
         session = self.SessionLocal()
@@ -34,7 +40,6 @@ class RepositoryConnection:
         finally:
             session.close()
             print("CONNECTION CLOSED")
-
 
 # Delete in the next release
 """class RepositoryConnection():

@@ -1,19 +1,16 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import ForeignKey, Integer
+from sqlalchemy.orm import Mapped, mapped_column
 from program.domain.Publication import Publication
 from program.domain.PublicationType import PublicationType
 
 class Magazine(Publication):
 
+    __tablename__ = "magazine"
+
+    id: Mapped[int] = mapped_column(ForeignKey("publication.id"), primary_key=True)
+
+    edition: Mapped[int] = mapped_column(Integer)
+
     __mapper_args__ = {
-        "polymorphic_identity": "magazine"
+        "polymorphic_identity": PublicationType.MAGAZINE
     }
-
-    edition = Column(Integer)
-
-    def __init__(self, id, title, author, year, inclusionDate, pagesNumber, avaliation, genre, anotations, status, edition):
-        super().__init__(id, title, author,
-                        year, inclusionDate, pagesNumber,
-                        avaliation, genre, anotations,
-                        status, edition, type_=PublicationType.MAGAZINE)
-
-        self._edition = edition
