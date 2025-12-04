@@ -3,5 +3,9 @@ from program.service.BaseService import BaseService
 
 
 class BookService(BaseService):
+    
 
-    tableName = BaseRepository(table_name="books")
+    def __init__(self):
+        repository = BaseRepository(table_name="books")
+
+        super().__init__(repository)

@@ -6,9 +6,6 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from program.domain.Base import Base
 
 class Annotation(Base):
-    """
-    Represents a anotaion made in a publication
-    """
 
     __tablename__ = "annotations"
 

@@ -1,58 +1,37 @@
 from abc import ABC
-from datetime import date
-from program.databases.Repository import Repository as repo
+
+from program.databases.Repository import BaseRepository
 
 class BaseService(ABC):
     """
     This class is used to connect what is in the repository to controller    
     """
 
-    # This is verrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyy big
-    def save(
-        self,
-        title,
-        author,
-        year,
-        type,
-        genre,
-        inclusionDate,
-        pagesNumber,
-        status,
-        avaliation,
-    ):
-        return self.repo.save(
-            title,
-            author,
-            year,
-            type,
-            genre,
-            inclusionDate,
-            pagesNumber,
-            status,
-            avaliation,
-        )
+    def __init__(self, repository: BaseRepository):
+        # O Service recebe o repositório pronto para usar
+        self.repo = repository
 
-    def getAll():
-        return repo.findAll()
+    def save           (self, title, author, year, type, genre, inclusion_date, pages_number, status, avaliation):
+        return self.repo.save(title, author, year, type, genre, inclusion_date, pages_number, status, avaliation)
+
+    def getAll(self):
+        return self.repo.findAll()
     
-    def getById(id:int):
-        repo.findById(id)
-        return repo.findById()
+    def getById(self, id: int):
+        return self.repo.findById(id)
     
-    def findByTitle(title:str):
-        return repo.findByTitulo()
+    def findByTitle(self, title: str):
+        # Corrigido para chamar o nome em inglês do Repository
+        return self.repo.findByTitle(title)
     
-    def findByAuthor(author:str): 
-        return repo.findByAutor()
+    def findByAuthor(self, author: str): 
+        return self.repo.findByAuthor(author)
     
-    def findByGenre(genre:str): 
-        return repo.findByGenero
+    def findByGenre(self, genre: str): 
+        return self.repo.findByGenre(genre)
     
-    def findByStatus(status:int): 
-        return repo.findByStatus
+    def findByStatus(self, status: str): 
+        return self.repo.findByStatus(status)
     
-    def findByPeriodoLeitura(periodo:date):
-        return repo.findByPeriodoLeitura()
-    
-    def deleteById(id:int):
-        return repo.deleteById()
+    def deleteById(self, id: int):
+        return self.repo.deleteById(id)

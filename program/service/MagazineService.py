@@ -3,9 +3,12 @@ from program.databases.Repository import BaseRepository
 from program.service.BaseService import BaseService
 
 
-class magazineService(BaseService):
-    
-    tableName = BaseRepository(table_name="books")
+class MagazineService(BaseService):
+
+    def __init__(self):
+        repository = BaseRepository(table_name="magazines")
+
+        super().__init__(repository)
 
     @override
     def save(
@@ -15,11 +18,10 @@ class magazineService(BaseService):
         year,
         type,
         genre,
-        inclusionDate,
-        pagesNumber,
+        inclusion_date,
+        pages_number,
         status,
         avaliation,
-        anotation,
         edition
     ):
         return self.repo.save(
@@ -28,10 +30,9 @@ class magazineService(BaseService):
             year,
             type,
             genre,
-            inclusionDate,
-            pagesNumber,
+            inclusion_date,
+            pages_number,
             status,
             avaliation,
-            anotation,
             edition
         )

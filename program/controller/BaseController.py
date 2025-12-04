@@ -1,32 +1,44 @@
-from program.schemas.Magazine import Magazine
-from program.schemas.Book import Book
-from program.service.BaseService import PublicationService as service
-
-from fastapi import FastAPI
+from abc import ABC
+from program.service.BaseService import BaseService
 
 from fastapi import APIRouter
 
-router = APIRouter()
+class BaseController(ABC):
 
-app = FastAPI()
+    def __init__(self, service: BaseService, table_name: str):
+        self.service = service
+        self.table_name = table_name
+        self.router = APIRouter(
+        prefix=f"/{table_name}", tags=[table_name.capitalize()]
+        )
+        self._routes()
 
-class BaseController():
+    def _routes(self): # To not use in others class
+        
+        @self.router.get("/")
+        def getAll():
+            return self.service.getAll()
+        
+        @self.router.get("/{id}")
+        def getById(id: int):
+            return self.service.getById(id)
 
-    async def root():
-        pass
+        @self.router.get("/author/{author}")
+        def getByAuthor(author: str):
+            return self.service.getByAuthor(author)
 
-    @app.get("/publications")
-    async def getAll():
-        return service.getAll()
+        @self.router.get("/genre/{genre}")
+        def getByGenre(genre: str):
+            return self.service.getByGenre
 
-    @app.post("/publications/create/book")
-    async def createbook(book: Book):
-        return service.Save(book)
+        @self.router.get("/status/{status}")
+        def getByStatus(status: str):
+            return self.service.getByStatus
 
-    @app.post("/publications/create/magazine")
-    async def createMagazine(magazine: Magazine):
-        return service.Save(magazine)
-
-    @app.delete("/publications/delete")
-    async def deletePublicationById(id: int):
-        return service.deleteById(id)
+        @self.router.get("/title/{title}")
+        def getByTitle(title: str):
+            return self.service.getByTitle
+        
+        @self.router.delete("/delete/{id}")
+        def deletePublicationById(id: int):
+            return self.service.deleteById(id)
