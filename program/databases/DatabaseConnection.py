@@ -26,9 +26,9 @@ class RepositoryConnection:
     def newQuery(self, query: str,  data: dict | list[dict] | None = None):
         session = self._SessionLocal()
         try:
-            #Execute 'Select' query
+            #Execute 'Select' querys
             if query.strip().upper().startswith("SELECT"):
-                result = session.execute(text(query), data).fetchall()
+                result = session.execute(text(query), data).mappings().all() # Return in a JSON format
                 return result
 
             if data is not None:
