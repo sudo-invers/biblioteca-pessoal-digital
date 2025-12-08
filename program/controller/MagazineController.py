@@ -16,11 +16,8 @@ def create_magazine(magazine: Magazine):
             title=magazine.title,
             author=magazine.author,
             year=magazine.year,
-            type=magazine.type_.value,
             genre=magazine.genre,
-            inclusionDate=magazine.inclusion_date,
-            pagesNumber=magazine.pages_number,
-            avaliation=magazine.avaliation,
+            pages_number=magazine.pages_number,
             edition=magazine.edition
         )
     except Exception as e:

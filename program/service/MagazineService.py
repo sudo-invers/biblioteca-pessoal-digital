@@ -11,5 +11,13 @@ class MagazineService(BaseService):
         super().__init__(repository)
 
     @override
-    def save(self, title, author, year, genre, pages_number,edition):
-        return self.repo.save(title,author,year,genre,pages_number,edition)
+    def save(self, title, author, year, genre, pages_number,edition, avaliation=None):
+        return self.repo.save(
+            title=title,
+            author=author,
+            year=year,
+            genre=genre,
+            pages_number=pages_number,
+            edition=edition,
+            avaliation=avaliation,
+        )
