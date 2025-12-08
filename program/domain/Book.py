@@ -10,6 +10,5 @@ class Book(Publication):
     type_: Mapped[PublicationType] = mapped_column(
         "type",
         Enum(PublicationType),
-        default=PublicationType.BOOK,
-        nullable=False
+        default=PublicationType.BOOK
     )

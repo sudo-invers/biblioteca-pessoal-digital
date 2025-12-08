@@ -18,9 +18,8 @@ def create_magazine(magazine: Magazine):
             year=magazine.year,
             type=magazine.type_.value,
             genre=magazine.genre,
-            inclusionDate=None,
+            inclusionDate=magazine.inclusion_date,
             pagesNumber=magazine.pages_number,
-            status="unread",
             avaliation=magazine.avaliation,
             edition=magazine.edition
         )

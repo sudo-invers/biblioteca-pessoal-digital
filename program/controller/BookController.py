@@ -16,11 +16,8 @@ def create_book(book: Book):
             title=book.title,
             author=book.author,
             year=book.year,
-            type=book.type_.value,
+            pages_number=book.pages_number,
             genre=book.genre,
-            inclusionDate=None,
-            pagesNumber=book.pages_number,
-            status="unread",
             avaliation=book.avaliation,
         )
     except Exception as e:

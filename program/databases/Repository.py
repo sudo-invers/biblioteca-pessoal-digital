@@ -1,46 +1,40 @@
+from datetime import date
 from program.databases.DatabaseConnection import RepositoryConnection
 
-class BaseRepository:
+class Repository:
 
     def __init__(self, table_name: str):
         self.bookshelf = table_name
-    """
-    Base repository
-    """
 
-    def save(self, title, author, year, type, genre, inclusion_date, pages_number, status, avaliation, edition = ""):
-
-        data = ({
+    def save(
+        self, title, author, year, genre, pages_number, avaliation=None, edition=None
+    ):
+        data = {
             "title": title,
             "author": author,
             "year": year,
-            "type": type,
-            "inclusion_date": inclusion_date,
             "genre": genre,
+            "inclusion_date": date.today(),
             "pages_number": pages_number,
-            "status": status,
             "avaliation": avaliation
-        })
+        }
 
-        if edition != "":  # Goto magazines
-            data.update({
-                "edition" : edition # Add edition to data dict
-            })
-            print("Edition detected") # Debug
-
+        if edition is not None:
+            data.update({"edition": edition})
             query = f"""
-            INSERT INTO {self.bookshelf} (title, author, year, type, inclusion_date, genre, pages_number, status, avaliation, edition)
-            VALUES (:title, :author, :year, :type, :inclusion_date, :genre, :pages_number, :status, :avaliation, :edition);
+                INSERT INTO {self.bookshelf}
+                (title, author, year, type, inclusion_date, genre, pages_number, avaliation, edition, status)
+                VALUES (:title, :author, :year, 'MAGAZINE', :inclusion_date, :genre, :pages_number, :avaliation, :edition, 'unread');
             """
-    
-        else: # Goto books
+        else:
             query = f"""
-                    INSERT INTO {self.bookshelf} (title, author, year, type, inclusion_date, genre, pages_number, status, avaliation)
-                    VALUES (:title, :author, :year, :type, :inclusion_date, :genre, :pages_number, :status, :avaliation);
-                    """
-            
+                INSERT INTO {self.bookshelf}
+                (title, author, year, type, inclusion_date, genre, pages_number, avaliation, status)
+                VALUES (:title, :author, :year, 'BOOK', :inclusion_date, :genre, :pages_number, :avaliation, 'unread');
+            """
+
         return RepositoryConnection().newQuery(query, data)
-    
+        
     def getAll(self):
         """
         debug only
@@ -88,14 +82,14 @@ class BaseRepository:
         #return 
 
     def deleteById(self, id:int):
+        if (id is None):
+            return None
+        
         data = ({"id": id})
 
         query = f"DELETE FROM {self.bookshelf} WHERE id=:id;"
 
-        if (id is None):
-            return None
-        else:
-            return RepositoryConnection().newQuery(query, data)
+        return RepositoryConnection().newQuery(query, data)
         
     def getByWord(self, word:str): # Any word that the user like (and no, this will not cause sql injection)
         data = ({"word": word})

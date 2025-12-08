@@ -13,8 +13,8 @@ class BaseController(ABC):
         )
         self._routes()
 
-    def _routes(self): # To not use in others class
-        
+    def _routes(self): # To not use in others class, that is not controllers
+
         @self.router.get("/")
         def getAll():
             return self.service.getAll()
@@ -29,15 +29,15 @@ class BaseController(ABC):
 
         @self.router.get("/genre/{genre}")
         def getByGenre(genre: str):
-            return self.service.getByGenre
+            return self.service.getByGenre(genre)
 
         @self.router.get("/status/{status}")
         def getByStatus(status: str):
-            return self.service.getByStatus
+            return self.service.getByStatus(status)
 
         @self.router.get("/title/{title}")
         def getByTitle(title: str):
-            return self.service.getByTitle
+            return self.service.getByTitle(title)
         
         @self.router.delete("/delete/{id}")
         def deletePublicationById(id: int):

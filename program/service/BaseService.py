@@ -1,37 +1,43 @@
 from abc import ABC
 
-from program.databases.Repository import BaseRepository
+from program.databases.Repository import Repository
 
 class BaseService(ABC):
     """
     This class is used to connect what is in the repository to controller    
     """
 
-    def __init__(self, repository: BaseRepository):
-        # O Service recebe o repositório pronto para usar
+    def __init__(self, repository: Repository):
         self.repo = repository
-
-    def save           (self, title, author, year, type, genre, inclusion_date, pages_number, status, avaliation):
-        return self.repo.save(title, author, year, type, genre, inclusion_date, pages_number, status, avaliation)
+        
+    def save(self, title, author, year, genre, pages_number, edition=None, avaliation=None):
+        return self.repo.save(
+            title=title,
+            author=author,
+            year=year,
+            genre=genre,
+            pages_number=pages_number,
+            edition=edition,
+            avaliation=avaliation,
+        )
 
     def getAll(self):
-        return self.repo.findAll()
+        return self.repo.getAll()
     
     def getById(self, id: int):
-        return self.repo.findById(id)
+        return self.repo.getById(id)
     
-    def findByTitle(self, title: str):
-        # Corrigido para chamar o nome em inglês do Repository
-        return self.repo.findByTitle(title)
+    def getByTitle(self, title: str):
+        return self.repo.getByTitle(title)
     
-    def findByAuthor(self, author: str): 
-        return self.repo.findByAuthor(author)
+    def getByAuthor(self, author: str): 
+        return self.repo.getByAuthor(author)
     
-    def findByGenre(self, genre: str): 
-        return self.repo.findByGenre(genre)
+    def getByGenre(self, genre: str): 
+        return self.repo.getByGenre(genre)
     
-    def findByStatus(self, status: str): 
-        return self.repo.findByStatus(status)
+    def getByStatus(self, status: str): 
+        return self.repo.getByStatus(status)
     
     def deleteById(self, id: int):
         return self.repo.deleteById(id)

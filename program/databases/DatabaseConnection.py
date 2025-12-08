@@ -15,7 +15,7 @@ class RepositoryConnection:
     # Switched from pure sqlite3, to sqlAlchemy for security reasons
     # Maybe later i will try using the ORM in its full potencial, but for now, it will not make a diference
 
-    _engine = create_engine("sqlite:///library.db", echo=True)
+    _engine = create_engine("sqlite:///library.db", echo=True, future=True)
     _SessionLocal = sessionmaker(bind=_engine, autocommit=False, autoflush=False)
 
     def __init__(self):
@@ -24,13 +24,11 @@ class RepositoryConnection:
         print("Database is ready!")
 
     def newQuery(self, query: str,  data: dict | list[dict] | None = None):
-        session = self.SessionLocal()
+        session = self._SessionLocal()
         try:
-            print("DB INITIALIZED WITH SUCCESS")
-
             #Execute 'Select' query
             if query.strip().upper().startswith("SELECT"):
-                result = session.fetchall()
+                result = session.execute(text(query), data).fetchall()
                 return result
 
             if data is not None:
