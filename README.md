@@ -8,6 +8,10 @@ permitindo o cadastro de publicações, o registro de leituras, o controle de st
 O sistema deve aplicar conceitos de encapsulamento, herança (simples e múltipla), métodos especiais, regras de negócio configuráveis.
 A persistência pode ser feita em JSON ou SQLite, com um repositório desacoplado do domínio.
 
+# Objetivos para o futuro:
+    - Armazenar de fato as publicações;
+    - Poder, através do programa, abrir um leitor de arquivos externo, e poder ler as publicações;
+    - Deixar a interface mais amigável, organizada e com mais opções
 
 # Estrutura das Classes:
 
@@ -201,35 +205,45 @@ classDiagram
 
 ```
 
-# Estrutura planejada de classes
+# Estrutura dos arquivos
 ```bash
 .
-├── main.py
+├── main_cli.py
 ├── program
-│   ├── cli
-│   │   ├── CLI.py
-│   │   ├── ComandParser.py
-│   │   ├── Comands.py
-│   │   ├── Menu.py
-│   │   └── window.txt
 │   ├── controller
-│   │   └── PublicationController.py
+│   │   ├── BaseController.py
+│   │   ├── BookController.py
+│   │   └── MagazineController.py
+│   ├── databases
+│   │   ├── DatabaseConnection.py
+│   │   └── Repository.py
 │   ├── domain
 │   │   ├── AlterStatus.py
-│   │   ├── Anotation.py
+│   │   ├── Annotation.py
+│   │   ├── Base.py
 │   │   ├── Book.py
 │   │   ├── Colletion.py
 │   │   ├── Magazine.py
 │   │   ├── Publication.py
 │   │   ├── PublicationType.py
-│   │   ├── ReadingStatus.py
 │   │   └── Report.py
-│   ├── repository
-│   │   ├── RepositoryConnection.py
-│   │   └── Repository.py
+│   ├── schemas
+│   │   ├── BaseSchema.py
+│   │   ├── Book.py
+│   │   └── Magazine.py
+│   ├── server.py
 │   ├── service
-│   │   └── PublicationService.py
-│   └── settings.json
-├── README.md
-└── venv
+│   │   ├── BaseService.py
+│   │   ├── BookService.py
+│   │   └── MagazineService.py
+│   ├── settings.json
+│   ├── test
+│   │   └── exampleTest.py
+│   ├── utils
+│   │   └── sql.py
+│   └── View
+│       ├── Comands.py
+│       ├── Menu.py
+│       └── Requests.py
+└── README.md
 ```
