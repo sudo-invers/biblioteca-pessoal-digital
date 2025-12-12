@@ -3,6 +3,7 @@ from rich.prompt import Prompt, IntPrompt
 from rich.table import Table
 
 from program.View.Requests import HttpRequest
+from program.utils.View import ViewUtils as utils
 
 console = Console()
 
@@ -12,7 +13,6 @@ class Comands:
     def __init__(self):
         self.req_book = HttpRequest("books", BASE_URL)
         self.req_magazine = HttpRequest("magazines", BASE_URL)
-
     def createBook(self):
         console.print("[bold blue]--- New book ---[/bold blue]")
         console.print("--- You can ignore year and pages if you want ---")
@@ -68,19 +68,13 @@ class Comands:
 
         table_name = Prompt.ask("View all (Book or Magazine): ").lower()
 
-        if table_name == "book":
-            response = self.req_book.getAll()
-        elif table_name == "magazine":
-            response = self.req_magazine.getAll()
-        else:
-            console.print(f"[red]Table '{table_name}' don't exist[/red]")
-            return
+        response = self.ViewUtils.selectAllPublicationByType(table_name) # Testing using self in a variable
 
         if response.status_code == 200:
             data = response.json()
             
             # Create a table uwu
-            table = Table(title="All publications")
+            table = Table(title=f"All {table_name}s")
 
             # Add colums;       # This shit is verrrrrry prettttyyy awaaaaaaaaaaaaaa
             table.add_column("ID", justify="center", style="cyan", no_wrap=True)
@@ -112,7 +106,6 @@ class Comands:
     def getPublicationById(self):
         console.print("[bold blue]--- Loading publication... ---[/bold blue]")
 
-        # Corrigindo input (adicionado parenteses no lower)
         table_name = Prompt.ask("Book or Magazine").lower()
         id_pub = Prompt.ask("id")
 
@@ -129,14 +122,11 @@ class Comands:
         if response and response.status_code == 200:
             data = response.json()
 
-            # --- CORREÇÃO 1: Garantir que é uma lista para o loop funcionar ---
-            # Se a API retornou um único dicionário, transformamos em lista com 1 item
             if isinstance(data, dict):
                 data = [data]
 
             table = Table(title=f"{table_name.capitalize()} details")
 
-            # Colunas Padrão
             table.add_column("ID", justify="center", style="cyan", no_wrap=True)
             table.add_column("Title", style="magenta")
             table.add_column("Author", style="green")
@@ -145,14 +135,11 @@ class Comands:
             table.add_column("Genre", justify="center")
             table.add_column("Rating", justify="center")
             
-            # Adiciona coluna extra no cabeçalho se for revista
             if table_name == "magazine":
                 table.add_column("Edition", justify="center", style="yellow")
 
             for item in data:
-                # --- CORREÇÃO 2: Montar a linha em uma lista antes de adicionar ---
-                
-                # 1. Cria a lista com os dados comuns
+
                 row_data = [
                     str(item.get("id", "-")),
                     item.get("title", "Not Found"),
@@ -163,15 +150,11 @@ class Comands:
                     str(item.get("avaliation", "0"))
                 ]
 
-                # 2. Se for revista, adiciona o dado extra nessa mesma lista
                 if table_name == "magazine":
-                    # Certifique-se que sua API retorna a chave "edition" ou "edicao"
                     row_data.append(str(item.get("edition", "-")))
 
-                # 3. Usa o asterisco (*) para "desempacotar" a lista como argumentos
                 table.add_row(*row_data)
 
-            # Para visualizar item único, print direto é melhor que pager
             console.print(table)
 
         else:
@@ -205,20 +188,138 @@ class Comands:
     def deleteCollection(self):
         pass
 
-    def update(self):
-        pass
+    def updatePatch(self):
+        console.print("[bold blue]--- Update publication ---[/bold blue]")
 
-    def updateUserConfiguration(self):
-        pass
+        table_name = Prompt.ask("Book or Magazine").lower()
+        id_pub = Prompt.ask("ID of the publication to update")
+
+        response = self.ViewUtils.selectPublicationTypeAndId(table_name, id_pub)
+
+        if response and response.status_code == 200:
+            data = response.json()
+
+            # If the response is a dict, convert it to a list
+            if isinstance(data, dict):
+                data = [data]
+
+            table = Table(title=f"Updating {table_name.capitalize()} details")
+
+            table.add_column("Field", justify="center", style="cyan", no_wrap=True)
+            table.add_column("Current Value", style="magenta")
+            table.add_column("New Value", style="green")
+
+            current_values = {
+                "Title": data[0].get("title", "Not Found"),
+                "Author": data[0].get("author", "Unknown"),
+                "Year": data[0].get("year", "-"),
+                "Pages": data[0].get("pages_number", "0"),
+                "Genre": data[0].get("genre", "Unknown"),
+                "Rating": data[0].get("avaliation", "0"),
+            }
+
+            for field, value in current_values.items():
+                new_value = Prompt.ask(
+                    f"New value for {field} (leave empty to keep the current value): ",
+                    default=value,
+                )                
+                if new_value:
+                    table.add_row(field, value, new_value)
+                else:
+                    table.add_row(field, value, value) # Value = not modified value
+
+            console.print(table)
+
+            confirm = " "
+
+            while (confirm != "yes" or confirm != "no"):
+                confirm = Prompt.ask(
+                    "Do you want to update this publication? (yes/no)", choices=["yes", "no"]
+                )
+                if confirm == "yes" or confirm == "y":
+                    confirm = "yes"
+                    updated_data = {
+                        field.lower(): new_value if new_value else value
+                        for field, value, new_value in zip(
+                            current_values.keys(),
+                            current_values.values(),
+                            table.columns[2].cells
+                        )
+                    }
+
+                    # Remove the 'Field' column (first column)
+                    updated_data.pop("field", None)
+
+                    # Send the updated data back to the server
+                    if table_name == "book":
+                        response = self.req_book.update(id_pub, updated_data)
+                    elif table_name == "magazine":
+                        response = self.req_magazine.update(id_pub, updated_data)
+
+                    if response.status_code == 200:
+                        console.print(
+                            f"[bold green]Successfully updated the {table_name}[/bold green]"
+                        )
+                    else:
+                        console.print(
+                            f"[red]Error while updating: {response.status_code}[/red]"
+                        )
+
+                elif confirm == "no" or confirm == "n":
+                    console.print("[yellow]Update cancelled.[/yellow]")
+                else:
+                    console.print("[blue]Select 'yes' or 'no'[/blue]")
+
+        else:
+            code = response.status_code if response else "Error"
+            console.print(f"[red]Error:[/red] {code}")
 
     def filters(self):
         pass
 
     def filterByWord(self):
-        pub_word = Prompt.ask("search: ")
-        response = self.req_magazine.getByVariable(str(pub_word))
+        pub_type = Prompt.ask("Filter by (Book or Magazine): ").lower().strip()
+        pub_word = Prompt.ask("Search word: ").lower().strip()
+        pub_column = Prompt.ask("What column: ").lower().strip()
 
-        if response.status_code == 200:
-            console.print(response.json())
+        # Validade table exists
+        if pub_type == "book" or pub_type == "books":
+            table_name = "books"
+            response = self.req_book.getByWord(pub_column, pub_word)
+        elif pub_type == "magazine" or pub_type == "magazines":
+            table_name = "magazines"
+            response = self.req_magazine.getByWord(pub_column, pub_word)
         else:
-            console.print("[red]Not found.[/red]")
+            console.print(
+                f"[red]Invalid publication type '{pub_type}'. Choose 'Book' or 'Magazine'.[/red]"
+            )
+            return
+
+        # Validate column exists
+        column_names = utils.getTableNames(table_name)
+
+        if not column_names or pub_column not in column_names:
+            console.print(
+                f"[red]Column '{pub_column}' not found in table '{table_name}'.[/red]\n"
+                f"[yellow]Available columns:[/yellow] {column_names}"
+            )
+            return
+
+        if response.status_code != 200:
+            console.print(f"[red]Error: {response.status_code} - {response.text}[/red]")
+            return
+
+        data = response.json()
+
+        if not data:
+            console.print("[yellow]No results found.[/yellow]")
+            return
+
+        # Convert dict to list, for best data manipulation
+        if isinstance(data, dict):
+            data = [data]
+
+        console.print(f"[bold green]Found {len(data)} result(s):[/bold green]")
+
+        for item in data:
+            console.print(item)

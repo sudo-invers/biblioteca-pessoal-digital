@@ -11,12 +11,10 @@ class HttpRequest:
     def __init__(self, table_name: str, base_url: str):
         self.table_name = table_name
         self.base_url = base_url.rstrip("/")
-        # Timeout evita que o programa congele se o servidor demorar
         self.timeout = 5
 
     def _execute(self, method: str, endpoint: str, json_data: dict = None):
-        """_summary_
-
+        """
         Args:
             method (str): HTTP action (ex: "GET", "POST", "DELETE").
             endpoint (str): Query url end
@@ -49,9 +47,9 @@ class HttpRequest:
             return self._mock_error_response(500, str(e))
 
     def _mock_error_response(self, status_code, message):
-        """Create a 'false' response, for not break the code."""
+        """Create a 'false' response, to not break the code."""
 
-        class MockResponse:
+        class MockResponse: # ...This is complicated
             def __init__(self, json_data, status_code):
                 self.json_data = json_data
                 self.status_code = status_code
@@ -68,9 +66,17 @@ class HttpRequest:
     def getAll(self):
         return self._execute("GET", "")
 
-    def getByVariable(self, text: str): 
+    def getByWord(self,colums_name: str, text: str):
+        """
+        Args:
+            colums_name (str): the name of the columm to search (in the db). EX: author
+            text (str): the text to search
+
+        Returns:
+            _type_: _description_
+        """
         safe_text = quote(text)  # Transforms special caracters in a safe format, example space = %20 
-        return self._execute("GET", f"get/{safe_text}") # Example:  "dovakin dragonborn" to "dovakin%20dragonborn" to not break the url"
+        return self._execute("GET", f"get/{colums_name}/{safe_text}") # Example:  "get/title/dovakin dragonborn" to "get/tile/dovakin%20dragonborn" to not break the url"
 
     def getById(self, id: int):
         return self._execute("GET", f"get/{id}")
@@ -81,41 +87,16 @@ class HttpRequest:
 
     def delete(self, id: int):
         return self._execute("DELETE", f"delete/{id}")
+    
+    def updatePut(self, id: int, data: dict):
+        """
+        Probrably, i am not using it
+        """
+        return self._execute("PUT", f"update/{id}", json_data=data)
 
-
-"""
-
-Testing new HttpRequest class, maybe i switch later
-
-class HttpRequest():
-
-    def __init__(self, table_name: str, base_url: str):
-        self.table_name = table_name
-        self.base_url = base_url.rstrip("/")  # "http://0.0.0.0:8000
-
-    def getAll(self):
-        request = requests.get(f"{self.base_url}/{self.table_name}/")
-
-        return request
-
-    def getByVariable(self, string: str):
-        request = requests.get(f"{self.base_url}/{self.table_name}/get/{string}")
-
-        return request
-
-    def getById(self, id:int):
-            request = requests.get(f"{self.base_url}/{self.table_name}/get/{id}")
-
-            return request
-
-    def post(self, string: str):
-        request = requests.post(f"{self.base_url}/{self.table_name}/post/{string}")
-
-        return request
-
-    def delete(self, id: int):
-        request = requests.delete(f"{self.base_url}/{self.table_name}/delete/{id}")
-
-        return request
-
-"""
+    def updatePatch(self, id: int, data: dict):
+        """
+        Update a record with the given id.
+        Sends JSON data to /update/{id} using HTTP patch
+        """
+        return self._execute("PATCH", f"update/{id}", json_data=data)

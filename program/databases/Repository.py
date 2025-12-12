@@ -97,7 +97,7 @@ class Repository:
         query = f"SELECT * FROM {self.bookshelf} WHERE title LIKE :word;"
 
         return RepositoryConnection().newQuery(query, data)
-
+    
     def getBestFivePublications(self):
         query = f"SELECT title, avaliation FROM {self.bookshelf} ORDER BY avaliation DESC LIMIT 5;"
 
@@ -112,3 +112,9 @@ class Repository:
         query = f"SELECT COUNT(id) FROM {self.bookshelf};"
         
         return RepositoryConnection().newQuery(query)
+
+    def update(self):
+        query = f"SELECT COUNT(id) FROM {self.bookshelf};"
+        
+        return RepositoryConnection().newQuery(query)
+    
