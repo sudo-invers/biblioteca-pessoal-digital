@@ -28,6 +28,10 @@ class RepositoryConnection:
         try:
             #Execute 'Select' querys
             if query.strip().upper().startswith("SELECT"):
+                result = session.execute(text(query)).mappings().all() # Return in a JSON format
+                return result
+            
+            if query.strip().upper().startswith("UPDATE"):
                 result = session.execute(text(query), data).mappings().all() # Return in a JSON format
                 return result
 

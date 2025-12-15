@@ -1,5 +1,5 @@
 from sqlalchemy import Enum, Integer
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from program.domain.Publication import Publication
 from program.domain.PublicationType import PublicationType
 
@@ -13,4 +13,10 @@ class Magazine(Publication):
         "type",
         Enum(PublicationType),
         default=PublicationType.MAGAZINE
+    )
+
+    annotations = relationship(
+        "MagazineAnnotation",
+        back_populates="magazine",
+        cascade="all, delete-orphan"
     )

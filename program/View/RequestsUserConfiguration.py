@@ -7,6 +7,16 @@ console = Console()
 class RequestsUserConfiguration:
     def __init__(self, config_file="program.user_config.json"):
         self.config_file = config_file
+    
+    def _save(self):
+        try:
+            with open(self.config_file, "w") as file:
+                json.dump(self.user_config, file, indent=4)
+            console.print(
+                "[bold green]Configuration updated and _saved successfully![/bold green]"
+            )
+        except Exception as e:
+            console.print(f"[red]Error saving the configuration: {e}[/red]")
 
     def load(self):
         try:
@@ -29,15 +39,6 @@ class RequestsUserConfiguration:
                 "annual reading goal": 0
             }
 
-    def save(self):
-        try:
-            with open(self.config_file, "w") as file:
-                json.dump(self.user_config, file, indent=4)
-            console.print(
-                "[bold green]Configuration updated and saved successfully![/bold green]"
-            )
-        except Exception as e:
-            console.print(f"[red]Error saving the configuration: {e}[/red]")
 
     def update(self):
         console.print("[bold blue]--- Current User Configuration ---[/bold blue]")
@@ -74,7 +75,7 @@ class RequestsUserConfiguration:
                 pass
             else:
                 self.user_config[field_to_update] = new_value
-        self.save_user_config()
+        self._save_user_config()
 
         console.print("\n[bold green]Configuration updated successfully![/bold green]")
         for key, value in self.user_config.items():

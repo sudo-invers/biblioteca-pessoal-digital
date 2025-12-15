@@ -1,4 +1,4 @@
-from program.repository.BaseRepository import Repository as repo
+from program.databases.Repository import Repository as repo
 
 
 class Report():

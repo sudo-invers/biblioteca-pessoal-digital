@@ -52,49 +52,49 @@ class Repository:
         query = f"select * from {self.bookshelf} where id = :id;"
 
         return RepositoryConnection().newQuery(query, data)
+    
+    def getByColumnName(self, column_name:str, value:str):
+        """
+        Return a query of the column name and its values 
 
-    def getByTitle(self, title:str): 
-        data = ({"title": title})
+        Args:
+            column_name: the column name (ex: title, genre)
+            value: all the data that will be selected
+        """
 
-        query = f"select * from {self.bookshelf} where title like :title;"
-        return RepositoryConnection().newQuery(query,data)
+        if not column_name.isidentifier():
+            raise ValueError(f"Invalid column name: {column_name}")
 
-    def getByAuthor(self, author:str):
-        data = ({"author": author})
+        data = {"value": value}
 
-        query = f"select * from {self.bookshelf} where author = :author;"
+        query = f"""
+            SELECT * FROM {self.bookshelf} WHERE {column_name} = :value;"""
+
+        return RepositoryConnection().newQuery(query, data)
+    
+    def getLikeByColumnName(self, column_name: str, value: str):
+        """
+        Return a query of the column name and its values
+
+        Args:
+            column_name: the column name (ex: title, genre)
+            value: all the data that will be selected
+        """
+
+        if not column_name.isidentifier():
+            raise ValueError(f"Invalid column name: {column_name}")
+
+        data = {"value": f"%{value}%"} # I like the like operation (:
+
+        query = f"""SELECT * FROM {self.bookshelf} WHERE {column_name} LIKE :value;"""
+
         return RepositoryConnection().newQuery(query, data)
 
-    def getByGenre(self, genre:str):
-        data = ({"genre": genre})
-
-        query = f"select * from {self.bookshelf} where genre = :genre;"
-        return RepositoryConnection().newQuery(query, data)
-
-    def getByStatus(self, status:str):
-        data = ({"status": status})
-
-        query = f"select * from {self.bookshelf} where status = :status;"
-        
-        return RepositoryConnection().newQuery(query, data)
-
-    #def getByReadingPeriod(period:Date): 
-        #return 
 
     def deleteById(self, id:int):
-        if (id is None):
-            return None
-        
         data = ({"id": id})
 
         query = f"DELETE FROM {self.bookshelf} WHERE id=:id;"
-
-        return RepositoryConnection().newQuery(query, data)
-        
-    def getByWord(self, word:str): # Any word that the user like (and no, this will not cause sql injection)
-        data = ({"word": word})
-
-        query = f"SELECT * FROM {self.bookshelf} WHERE title LIKE :word;"
 
         return RepositoryConnection().newQuery(query, data)
     
@@ -107,14 +107,20 @@ class Repository:
         query = f"SELECT title, avaliation FROM {self.bookshelf};"
 
         return RepositoryConnection().newQuery(query)
-    
+
     def getPublicationAmount(self):
         query = f"SELECT COUNT(id) FROM {self.bookshelf};"
-        
+
         return RepositoryConnection().newQuery(query)
 
-    def update(self):
-        query = f"SELECT COUNT(id) FROM {self.bookshelf};"
-        
-        return RepositoryConnection().newQuery(query)
-    
+    def putPublication(self, id: int, dict: dict):
+
+        queryList = []
+
+        for key, value in dict.items():
+            if key == ";" or value == ";":
+                break
+
+            queryList.append([f"UPDATE {self.bookshelf} SET {key}='{value}' WHERE id={id};"])
+
+        return RepositoryConnection().newQuery(queryList)

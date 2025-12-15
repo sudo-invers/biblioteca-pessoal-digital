@@ -27,17 +27,11 @@ class BaseService(ABC):
     def getById(self, id: int):
         return self.repo.getById(id)
     
-    def getByTitle(self, title: str):
-        return self.repo.getByTitle(title)
-    
-    def getByAuthor(self, author: str): 
-        return self.repo.getByAuthor(author)
-    
-    def getByGenre(self, genre: str): 
-        return self.repo.getByGenre(genre)
-    
-    def getByStatus(self, status: str): 
-        return self.repo.getByStatus(status)
+    def getLikeByColumnName(self, column_name: str, status: str): 
+        return self.repo.getLikeByColumnName(column_name,status)
     
     def deleteById(self, id: int):
         return self.repo.deleteById(id)
+
+    def publicationPatch(self, id: int, dict: dict):
+        return self.repo.putPublication(id, dict)

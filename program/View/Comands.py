@@ -63,12 +63,16 @@ class Comands:
         )
         pass
 
-    def getAllPublications(self):
+    def getAllPublications(self, table_name: str):
         console.print("[bold blue]--- Loading publications... ---[/bold blue]")
 
-        table_name = Prompt.ask("View all (Book or Magazine): ").lower()
-
-        response = self.ViewUtils.selectAllPublicationByType(table_name) # Testing using self in a variable
+        if table_name == "book" or table_name == "books" :
+            response = self.req_book.getAll()
+        elif table_name == "magazine" or table_name == "magazines":
+            response = self.req_magazine.getAll()
+        else:
+            console.print(f"[red]Table '{table_name}' don't exist[/red]")
+            return
 
         if response.status_code == 200:
             data = response.json()
@@ -188,13 +192,18 @@ class Comands:
     def deleteCollection(self):
         pass
 
-    def updatePatch(self):
+    def updatePatch(self, table_name: str):
         console.print("[bold blue]--- Update publication ---[/bold blue]")
 
-        table_name = Prompt.ask("Book or Magazine").lower()
         id_pub = Prompt.ask("ID of the publication to update")
 
-        response = self.ViewUtils.selectPublicationTypeAndId(table_name, id_pub)
+        if table_name == "book":
+            response = self.req_book.getById(id_pub)
+        elif table_name == "magazine":
+            response = self.req_magazine.getById(id_pub)
+        else:
+            console.print(f"[red]Table '{table_name}' doesn't exist[/red]")
+            return None
 
         if response and response.status_code == 200:
             data = response.json()
@@ -210,19 +219,20 @@ class Comands:
             table.add_column("New Value", style="green")
 
             current_values = {
-                "Title": data[0].get("title", "Not Found"),
-                "Author": data[0].get("author", "Unknown"),
-                "Year": data[0].get("year", "-"),
-                "Pages": data[0].get("pages_number", "0"),
-                "Genre": data[0].get("genre", "Unknown"),
-                "Rating": data[0].get("avaliation", "0"),
+                "Title": data[0].get("title"),
+                "Author": data[0].get("author"),
+                "Year": str(data[0].get("year")),
+                "Pages": str(data[0].get("pages_number")),
+                "Genre": data[0].get("genre"),
+                "Rating": str(data[0].get("avaliation"))
             }
 
             for field, value in current_values.items():
                 new_value = Prompt.ask(
                     f"New value for {field} (leave empty to keep the current value): ",
-                    default=value,
-                )                
+                    default=value
+                )
+                
                 if new_value:
                     table.add_row(field, value, new_value)
                 else:
@@ -230,45 +240,42 @@ class Comands:
 
             console.print(table)
 
-            confirm = " "
 
-            while (confirm != "yes" or confirm != "no"):
-                confirm = Prompt.ask(
-                    "Do you want to update this publication? (yes/no)", choices=["yes", "no"]
-                )
-                if confirm == "yes" or confirm == "y":
-                    confirm = "yes"
-                    updated_data = {
-                        field.lower(): new_value if new_value else value
-                        for field, value, new_value in zip(
-                            current_values.keys(),
-                            current_values.values(),
-                            table.columns[2].cells
-                        )
-                    }
+            confirm = Prompt.ask(
+                "Do you want to update this publication?", choices=["yes", "no"]
+            )
+            if confirm == "yes" or confirm == "y":
+                confirm = "yes"
+                updated_data = {
+                    field.lower(): new_value if new_value else value
+                    for field, value, new_value in zip(
+                        current_values.keys(),
+                        current_values.values(),
+                        table.columns[2].cells
+                    )
+                }
 
-                    # Remove the 'Field' column (first column)
-                    updated_data.pop("field", None)
+                updated_data.pop("field", None)
 
-                    # Send the updated data back to the server
-                    if table_name == "book":
-                        response = self.req_book.update(id_pub, updated_data)
-                    elif table_name == "magazine":
-                        response = self.req_magazine.update(id_pub, updated_data)
+                # Send the updated data back to the server
+                if table_name == "book":
+                    response = self.req_book.updatePatch(id_pub, updated_data)
+                elif table_name == "magazine":
+                    response = self.req_magazine.updatePatch(id_pub, updated_data)
 
-                    if response.status_code == 200:
-                        console.print(
-                            f"[bold green]Successfully updated the {table_name}[/bold green]"
-                        )
-                    else:
-                        console.print(
-                            f"[red]Error while updating: {response.status_code}[/red]"
-                        )
-
-                elif confirm == "no" or confirm == "n":
-                    console.print("[yellow]Update cancelled.[/yellow]")
+                if response.status_code == 200:
+                    console.print(
+                        f"[bold green]Successfully updated the {table_name}[/bold green]"
+                    )
                 else:
-                    console.print("[blue]Select 'yes' or 'no'[/blue]")
+                    console.print(
+                        f"[red]Error while updating: {response.status_code}[/red]"
+                    )
+
+            elif confirm == "no" or confirm == "n":
+                console.print("[yellow]Update cancelled.[/yellow]")
+            else:
+                console.print("[blue]Select 'yes' or 'no'[/blue]")
 
         else:
             code = response.status_code if response else "Error"
@@ -279,29 +286,37 @@ class Comands:
 
     def filterByWord(self):
         pub_type = Prompt.ask("Filter by (Book or Magazine): ").lower().strip()
-        pub_word = Prompt.ask("Search word: ").lower().strip()
-        pub_column = Prompt.ask("What column: ").lower().strip()
 
-        # Validade table exists
+        pub_value = Prompt.ask("Value to search for: ").lower().strip()
+
         if pub_type == "book" or pub_type == "books":
             table_name = "books"
-            response = self.req_book.getByWord(pub_column, pub_word)
+
+            # Validade if the column exist in the db and print the colums
+            column_names = utils.visualizeColumnsNames(table_name)
+            console.print(f"[yellow]Available columns:[/yellow] {column_names}")
+
+            pub_column = Prompt.ask("Column to search in: ").lower().strip()
+
+            response = self.req_book.getByWord(pub_column, pub_value)
+
         elif pub_type == "magazine" or pub_type == "magazines":
             table_name = "magazines"
-            response = self.req_magazine.getByWord(pub_column, pub_word)
+
+            column_names = utils.visualizeColumnsNames(table_name)
+            console.print(f"[yellow]Available columns:[/yellow] {column_names}")
+
+            pub_column = Prompt.ask("Column to search in: ").lower().strip()
+
+            response = self.req_magazine.getByWord(pub_column, pub_value)
+
         else:
-            console.print(
-                f"[red]Invalid publication type '{pub_type}'. Choose 'Book' or 'Magazine'.[/red]"
-            )
+            console.print(f"[red]Invalid type '{pub_type}'. Use Book or Magazine.[/red]")
             return
 
-        # Validate column exists
-        column_names = utils.getTableNames(table_name)
-
-        if not column_names or pub_column not in column_names:
+        if pub_column not in column_names:
             console.print(
-                f"[red]Column '{pub_column}' not found in table '{table_name}'.[/red]\n"
-                f"[yellow]Available columns:[/yellow] {column_names}"
+                f"[red]Column '{pub_column}' does not exist in '{table_name}'.[/red]"
             )
             return
 
@@ -315,11 +330,30 @@ class Comands:
             console.print("[yellow]No results found.[/yellow]")
             return
 
-        # Convert dict to list, for best data manipulation
+    # ----------------------------------------  
+    #           TABLE PRINT 
+    # ----------------------------------------
+        # Convert dict to list
         if isinstance(data, dict):
             data = [data]
 
-        console.print(f"[bold green]Found {len(data)} result(s):[/bold green]")
+        table = Table(
+            title=f"Results from {table_name}",
+            expand=False,
+            show_lines=True,
+        )
 
-        for item in data:
-            console.print(item)
+        # Print columns
+        for col in data[0].keys():
+            table.add_column(
+                col,
+                style="cyan",
+                no_wrap=True,
+                overflow="fold",
+                width=20
+            )
+
+        for row in data:
+            table.add_row(*[str(row[col]) for col in row.keys()])
+
+        console.print(table)

@@ -19,26 +19,18 @@ class BaseController(ABC):
         def getAll():
             return self.service.getAll()
         
-        @self.router.get("/{id}")
+        @self.router.get("/get/{id}")
         def getById(id: int):
             return self.service.getById(id)
 
-        @self.router.get("/author/{author}")
-        def getByAuthor(author: str):
-            return self.service.getByAuthor(author)
+        @self.router.get("/get/search/{column_name}/{value}")
+        def getGenericColumn(column_name: str, value ):
+            return self.service.getLikeByColumnName(column_name, value)
 
-        @self.router.get("/genre/{genre}")
-        def getByGenre(genre: str):
-            return self.service.getByGenre(genre)
-
-        @self.router.get("/status/{status}")
-        def getByStatus(status: str):
-            return self.service.getByStatus(status)
-
-        @self.router.get("/title/{title}")
-        def getByTitle(title: str):
-            return self.service.getByTitle(title)
-        
         @self.router.delete("/delete/{id}")
         def deletePublicationById(id: int):
             return self.service.deleteById(id)
+
+        @self.router.patch("/update/{id}")
+        def patchPublication(id: int, dict: dict):
+            return self.service.publicationPatch(id, dict)
