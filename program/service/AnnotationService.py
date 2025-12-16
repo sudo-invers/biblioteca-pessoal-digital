@@ -5,12 +5,12 @@ class AnnotationService:
     def __init__(self):
         self.repo = AnnotationRepository()
 
-    def save(self, publication_type: str, publication_id: int, page: int, text: str):
+    def save(self, publication_type: str, publication_id: int, page: int, text_content: str):
         return self.repo.save(
             publication_type=publication_type,
             publication_id=publication_id,
             page=page,
-            text=text,
+            text_content=text_content
         )
 
     def getAll(self):

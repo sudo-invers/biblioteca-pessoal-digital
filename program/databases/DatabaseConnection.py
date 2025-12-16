@@ -6,6 +6,7 @@ from program.domain.Base import Base
 # I am not using, but it create the tables if not exist
 from program.domain.Book import Book  # noqa: F401
 from program.domain.Magazine import Magazine  # noqa: F401
+from program.domain.Annotation import Annotation  # noqa: F401
 
 
 class RepositoryConnection:
@@ -28,7 +29,7 @@ class RepositoryConnection:
         try:
             #Execute 'Select' querys
             if query.strip().upper().startswith("SELECT"):
-                result = session.execute(text(query)).mappings().all() # Return in a JSON format
+                result = session.execute(text(query), data).mappings().all() # Return in a JSON format
                 return result
             
             if query.strip().upper().startswith("UPDATE"):

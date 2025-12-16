@@ -75,8 +75,9 @@ class CLI:
 
             if action1 == "5":
                 console.print("[0] Back")
-                console.print("[1] Update Magazine")
-                action2 = self.utils.promptAskQuantity(2)
+                console.print("[1] Load user configuration")
+                console.print("[1] Update user configuration")
+                action2 = self.utils.promptAskQuantity(3)
             
             if action1 == "6":
                 console.print("[0] Back")
@@ -153,9 +154,9 @@ class CLI:
             
             if action2 == "3":
                 if action3 == "1":
-                    self.annotations.delete("books")                    
+                    self.annotations.delete("book")                    
                 elif action3 == "2":
-                    self.annotations.delete("magazines")
+                    self.annotations.delete("magazine")
 
 
 if __name__ == "__main__":

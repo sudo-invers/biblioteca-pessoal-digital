@@ -66,8 +66,11 @@ class AnnotationCommands:
                 str(annotation.get("text", "")),
                 str(annotation.get("created_at", "-")),
             )
-
-        console.print(table)
+        if len(data) > 0:
+            with console.pager(styles=True):
+                console.print(table)
+        else:
+            console.print("[yellow]No annotations found.[/yellow]")
 
     def delete(self):
         console.print("[bold red]--- Delete annotation ---[/bold red]")

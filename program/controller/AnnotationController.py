@@ -14,12 +14,14 @@ def createAnnotation(annotation: Annotation):
             publication_type=annotation.publication_type,
             publication_id=annotation.publication_id,
             page=annotation.page,
-            text=annotation.text,
+            text_content=annotation.text
         )
     except Exception as e:
+        print(f"Error: {e}")
+
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e),
+            detail=f"Error to save: {str(e)}",  # Envia o detalhe para o cliente também
         )
 
 
@@ -33,7 +35,7 @@ def getById(id: int):
     return service.getById(id)
 
 
-@router.get("/publication/{type}/{id}")
+@router.get("/{type}/{id}")
 def getByPublication(type: str, id: int):
     """
     Args:
@@ -43,7 +45,7 @@ def getByPublication(type: str, id: int):
     return service.getByPublication(type, id)
 
 
-@router.get("/publication/{type}/{id}/page/{page}")
+@router.get("/{type}/{id}/page/{page}")
 def getByPage(type: str, id: int, page: int):
     """
     Args:
