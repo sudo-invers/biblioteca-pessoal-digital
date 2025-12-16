@@ -8,7 +8,6 @@ from program.View.AnnotationsRequests import AnnotationRequests
 console = Console()
 BASE_URL = "http://127.0.0.1:8000"
 
-
 class AnnotationCommands:
     def __init__(self):
         self.annotations = AnnotationRequests(BASE_URL)

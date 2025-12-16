@@ -32,10 +32,11 @@ class RepositoryConnection:
                 result = session.execute(text(query), data).mappings().all() # Return in a JSON format
                 return result
             
-            if query.strip().upper().startswith("UPDATE"):
-                result = session.execute(text(query), data).mappings().all() # Return in a JSON format
-                return result
+            #if query.strip().upper().startswith("UPDATE"):
+            #    result = session.execute(text(query), data).mappings().all() # Return in a JSON format
+            #    return result
 
+            # Execute update, insert and delete
             if data is not None:
                 # Execute the query and the data params
                 session.execute(text(query), data)

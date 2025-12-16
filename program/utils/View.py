@@ -10,7 +10,7 @@ DB_URL = "sqlite:///library.db"
 
 class ViewUtils:
 
-    def visualizeColumnsNames(table_name: str) -> str:
+    def visualizeColumnsNames(table_name: str):
         """
         Returns all columns names of a table 
         """
@@ -30,6 +30,12 @@ class ViewUtils:
             choices.append(f"{i}") 
         prompt = Prompt.ask("\n Write the option number", choices=choices)
         return prompt
+
+    def validateNotEmpty(text: str) -> bool:
+        """Valida se o texto NÃO é vazio (usado para campos obrigatórios)."""
+        return bool(text.strip())
+
+
 class Execute:
     def __init__(self, base_url: str, table_name: str, timeout: int = 5):
         self.base_url = base_url.rstrip("/")

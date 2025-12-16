@@ -5,7 +5,8 @@ from rich.console import Console
 
 from program.View.Comands import Comands
 from program.View.AnnotationsComands import AnnotationCommands
-from program.View.RequestsUserConfiguration import RequestsUserConfiguration
+from program.View.ReportComands import ReportCommands
+from program.View.UserConfiguration import RequestsUserConfiguration
 from program.utils.View import ViewUtils
 
 console = Console()
@@ -15,6 +16,7 @@ class CLI:
         self.utils = ViewUtils()
         self.comands = Comands()
         self.annotations = AnnotationCommands()
+        self.report = ReportCommands()
         self.config = RequestsUserConfiguration()
 
     def run(self):
@@ -33,16 +35,19 @@ class CLI:
             console.print("[light_sky_blue1]-------------------------[/light_sky_blue1]")
             console.print("[3] Delete Publication")
             console.print("[green]-------------------------[/green]")
-            console.print("[4] Update Publication")
+            console.print("[4] Alter Publication parameters")
             console.print("[green]-------------------------[/green]")
-            console.print("[5] configurations]")
+            console.print("[5] Update publication status")
+            console.print("[green]-------------------------[/green]")
+            console.print("[6] configurations")
             console.print("[purple]-------------------------[/purple]")
-            console.print("[6] Annotations")
+            console.print("[7] Reports")
+            console.print("[purple]-------------------------[/purple]")
+            console.print("[8] Annotations")
             console.print("[red]-------------------------[/red]")
             console.print("[0] Exit")
 
-            # User input
-            action1 = self.utils.promptAskQuantity(7)
+            action1 = self.utils.promptAskQuantity(9)
             action3 = "None"
 
             if action1 == "0":
@@ -72,14 +77,27 @@ class CLI:
                 console.print("[1] Update Book")
                 console.print("[2] Update Magazine")
                 action2 = self.utils.promptAskQuantity(3)
-
+            
             if action1 == "5":
                 console.print("[0] Back")
+                console.print("[1] Alter Book status")
+                console.print("[2] Alter Magazine status")
+                action2 = self.utils.promptAskQuantity(3)
+
+            if action1 == "6":
+                console.print("[0] Back")
                 console.print("[1] Load user configuration")
-                console.print("[1] Update user configuration")
+                console.print("[2] Update user configuration")
                 action2 = self.utils.promptAskQuantity(3)
             
-            if action1 == "6":
+            if action1 == "7":
+                console.print("[0] Back")
+                console.print("[1] Generate report")
+                console.print("[2] List reports")
+                console.print("[3] View report")
+                action2 = self.utils.promptAskQuantity(4)
+
+            if action1 == "8":
                 console.print("[0] Back")
                 console.print("[1] Create annotation")
                 console.print("[2] List annotations")
@@ -132,14 +150,34 @@ class CLI:
                 self.comands.updatePatch("book")
             elif action2 == "2":
                 self.comands.updatePatch("magazine")
-
+            
+        elif action1 == "4":
+            if action2 == "1":
+                self.comands.updatePatch("book")
+            elif action2 == "2":
+                self.comands.updatePatch("magazine")
+        
         elif action1 == "5":
             if action2 == "1":
-                self.config.load()
+                self.comands.updateStatusPatch("book")
+            elif action2 == "2":
+                self.comands.updateStatusPatch("magazine")
+
+        elif action1 == "6":
+            if action2 == "1":
+                self.config.show()
             elif action2 == "2":
                 self.config.update()
 
-        elif action1 == "6":
+        elif action1 == "7":
+            if action2 == "1":
+                self.report.generate()
+            elif action2 == "2":
+                self.report.list()
+            elif action2 == "3":
+                self.report.show()
+
+        elif action1 == "8":
             if action2 == "1":
                 if action3 == "1":
                     self.annotations.create("book")

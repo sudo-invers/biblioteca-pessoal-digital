@@ -113,14 +113,18 @@ class Repository:
 
         return RepositoryConnection().newQuery(query)
 
-    def putPublication(self, id: int, dict: dict):
+    def putPublication(self, id: int, data: dict):
+        queries = []
+        params = []
 
-        queryList = []
+        for key, value in data.items():
+            if value is None:
+                continue
 
-        for key, value in dict.items():
-            if key == ";" or value == ";":
-                break
+            queries.append(f"UPDATE {self.bookshelf} SET {key} = :value WHERE id = :id")
+            params.append({"id": id, "value": value})
 
-            queryList.append([f"UPDATE {self.bookshelf} SET {key}='{value}' WHERE id={id};"])
+        repo = RepositoryConnection()
 
-        return RepositoryConnection().newQuery(queryList)
+        for query, param in zip(queries, params):
+            repo.newQuery(query, param)

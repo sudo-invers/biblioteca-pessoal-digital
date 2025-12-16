@@ -3,6 +3,7 @@ from rich.prompt import Prompt, IntPrompt
 from rich.table import Table
 
 from program.View.Requests import HttpRequest
+from program.domain.AlterStatus import AlterStatus
 from program.utils.View import ViewUtils as utils
 
 console = Console()
@@ -17,11 +18,23 @@ class Comands:
         console.print("[bold blue]--- New book ---[/bold blue]")
         console.print("--- You can ignore year and pages if you want ---")
         
-        title = Prompt.ask("Title: ")
-        author = Prompt.ask("Author: ")
-        year = IntPrompt.ask("Publication year: ") 
-        pages = IntPrompt.ask("number of pages: ")
-        genre = Prompt.ask("Genre: ")
+        while True:
+            title = Prompt.ask("Title", ).strip()
+
+            if (title == ""):
+                console.print("[red]Title cannot be empty[/red]")
+            else:
+
+                author = Prompt.ask("Author", default="-").strip()
+                year = IntPrompt.ask("Publication year") 
+                
+                if year < 1500:
+                    console.print("[red]For some reason, year cannot be less than 1500[/red]")
+                
+                else:
+                    pages = IntPrompt.ask("number of pages", default="0")
+                    genre = Prompt.ask("Genre", default="-").strip()
+                    break
 
         book_data = {
             "title": title,
@@ -44,6 +57,23 @@ class Comands:
         year = IntPrompt.ask("Publication year: ")
         pages = IntPrompt.ask("number of pages: ")
         edition = IntPrompt.ask("edition: ")
+
+        while True:
+            title = Prompt.ask("Title", ).strip()
+
+            if (title == ""):
+                console.print("[red]Title cannot be empty[/red]")
+            else:
+
+                author = Prompt.ask("Author", default="-").strip()
+                year = IntPrompt.ask("Publication year") 
+                
+                if year < 1500:
+                    console.print("[red]For some reason, year cannot be less than 1500[/red]")
+                else:
+                    pages = IntPrompt.ask("number of pages", default="0")
+                    edition = IntPrompt.ask("Edition", default="0")
+                    break
 
         book_data = {
             "title": title,
@@ -222,21 +252,41 @@ class Comands:
                 "Title": data[0].get("title"),
                 "Author": data[0].get("author"),
                 "Year": str(data[0].get("year")),
-                "Pages": str(data[0].get("pages_number")),
+                "Pages_number": str(data[0].get("pages_number")),
                 "Genre": data[0].get("genre"),
-                "Rating": str(data[0].get("avaliation"))
+                "Avaliation": str(data[0].get("avaliation"))
             }
+            rating_choices = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 
             for field, value in current_values.items():
-                new_value = Prompt.ask(
-                    f"New value for {field} (leave empty to keep the current value): ",
-                    default=value
-                )
                 
-                if new_value:
-                    table.add_row(field, value, new_value)
+                if field == "Avaliation":
+                    new_value = Prompt.ask(
+                        f"New value for {field} (rating 0 - 10) (leave empty to keep the current value): ",
+                        default=value,
+                        choices=rating_choices
+                    )
+                    column_new_value = str(new_value)
+                    
+                elif field == "Year" or field == "Pages_number":
+                    new_value = IntPrompt.ask(
+                        f"New value for {field} (leave empty to keep the current value):",
+                        default=value
+
+                    )
+                    column_new_value = str(new_value)
                 else:
-                    table.add_row(field, value, value) # Value = not modified value
+                    new_value = Prompt.ask(
+                        f"New value for {field} (leave empty to keep the current value): ",
+                        default=value
+                    )
+                    column_new_value = str(new_value)
+                    
+                
+                if column_new_value:
+                    table.add_row(field, value, column_new_value)
+                else:
+                    table.add_row(field, value, value) # value = not modified value
 
             console.print(table)
 
@@ -281,10 +331,73 @@ class Comands:
             code = response.status_code if response else "Error"
             console.print(f"[red]Error:[/red] {code}")
 
+    def updateStatusPatch(self, table_name: str):
+        console.print("[bold blue]--- Update publication status ---[/bold blue]")
+
+        id_pub = IntPrompt.ask("ID of the publication to update")
+
+        # Select the client
+        if table_name == "book":
+            response = self.req_book.getById(id_pub)
+            label = "book"
+        elif table_name == "magazine":
+            response = self.req_magazine.getById(id_pub)
+            label = "magazine"
+        else:
+            console.print(f"[red]Table '{table_name}' doesn't exist[/red]")
+            return
+
+        if not response or response.status_code != 200:
+            console.print("[red]Publication not found[/red]")
+            return
+
+        data = response.json()
+        if isinstance(data, list):
+            data = data[0]
+
+        current_status = data.get("status")
+
+        # Enum values for prompt
+        status_choices = [status.value for status in AlterStatus]
+        #status_choices = ["unread", "reading", "completed"]
+
+        table = Table(title=f"{label} status update")
+        table.add_column("Field", style="cyan")
+        table.add_column("Current", style="magenta")
+        table.add_column("New", style="green")
+
+        new_status = Prompt.ask(
+            "Select new status", choices=status_choices, default=current_status
+        )
+
+        table.add_row("Status", current_status, new_status)
+        console.print(table)
+
+        confirm = Prompt.ask("Confirm status update?", choices=["yes", "no"], default="no")
+
+        if confirm != "yes":
+            console.print("[yellow]Update cancelled.[/yellow]")
+            return
+
+        payload = {
+            "status": new_status
+        }
+
+        # PATCH request
+        if table_name == "book":
+            response = self.req_book.updatePatch(id_pub, payload)
+        else:
+            response = self.req_magazine.updatePatch(id_pub, payload)
+
+        if response.status_code == 200:
+            console.print("[bold green]Status updated successfully[/bold green]")
+        else:
+            console.print(f"[red]Update failed:[/red] {response.status_code}")
+
     def filters(self):
         pass
 
-    def filterByWord(self):
+    def filterByTitles(self): # Used to filter publication titles
         pub_type = Prompt.ask("Filter by (Book or Magazine): ").lower().strip()
 
         pub_value = Prompt.ask("Value to search for: ").lower().strip()
@@ -329,14 +442,11 @@ class Comands:
         if not data:
             console.print("[yellow]No results found.[/yellow]")
             return
-
-    # ----------------------------------------  
-    #           TABLE PRINT 
-    # ----------------------------------------
         # Convert dict to list
         if isinstance(data, dict):
             data = [data]
 
+        # Print the  table
         table = Table(
             title=f"Results from {table_name}",
             expand=False,
